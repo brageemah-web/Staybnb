@@ -11,7 +11,7 @@ namespace staybnb.Models
         public int PropertyId { get; set; }
         public HostProperty Property { get; set; } = null!;
 
-        [ForeignKey(nameof(Guest)]
+        [ForeignKey(nameof(Guest))]
         public string GuestId { get; set; } = null!;
         public ApplicationUser Guest { get; set; } = null!;
 

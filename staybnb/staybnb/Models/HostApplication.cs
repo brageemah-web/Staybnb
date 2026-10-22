@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace staybnb.Models
 {
-    public class HostApplcation
+    public class HostApplication
     {
         public int Id { get; set; }
 
@@ -15,6 +15,8 @@ namespace staybnb.Models
         public int PropertyId { get; set; }
         public HostProperty Property { get; set; } = null!;
         public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
+        public DateTime? ReviewedAt { get; set; }
+        public string? RejectionReason { get; set; }
         public DateTime AppliedAt { get; set; } = DateTime.Now;
     }
 }

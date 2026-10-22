@@ -13,9 +13,9 @@ namespace staybnb.Models
         [StringLength(50)]
         public string LastName { get; set; } = "";
 
-        public string ProfilePictureUrl { get; set; }
+        public string? ProfilePictureUrl { get; set; }
 
-        public DateTime CreateAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public ICollection<HostProperty> Properties { get; set; } = new List<HostProperty>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();

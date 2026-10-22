@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace staybnb.Models
 {
-    public class WishlistItem
+    public class WishListItem
     {
         public int Id { get; set; }
 
@@ -12,7 +12,7 @@ namespace staybnb.Models
         public ApplicationUser User { get; set; } = null!;
 
         [ForeignKey(nameof(Property))]
-        public string PropertyId { get; set; }
+        public int PropertyId { get; set; } 
         public HostProperty Property { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

@@ -8,7 +8,7 @@ namespace staybnb.Models
         public int Id { get; set; }
 
         [ForeignKey(nameof(Property))]
-        public int PropertId { get; set; }
+        public int PropertyId { get; set; }
         public HostProperty Property { get; set; } = null!;
 
         [ForeignKey(nameof(Reviewer))]

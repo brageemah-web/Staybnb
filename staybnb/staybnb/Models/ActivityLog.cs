@@ -13,8 +13,9 @@ namespace staybnb.Models
 
         [Required]
         [StringLength(100)]
-        public string Action { get; set; }
+        public string Action { get; set; } = "";
 
+        public string? Details { get; set; }
         public ActivityType ActivityType { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
