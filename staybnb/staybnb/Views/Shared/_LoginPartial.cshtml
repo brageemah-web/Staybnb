@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using staybnb.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+<ul class="navbar-nav ms-auto">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        if (User.IsInRole("Guest"))
+        {
+            <li class="nav-item"><a class="nav-link" asp-controller="HostApplication" asp-action="Create">Become a Host</a></li>
+            <li class="nav-item"><a class="nav-link" asp-controller="HostApplication" asp-action="Status">Application Status</a></li>
+
+            @* Step 7: uncomment when GuestController exists
+            <li class="nav-item"><a class="nav-link" asp-controller="Guest" asp-action="MyBookings">My Bookings</a></li>
+            *@
+        }
+
+        @* Step 7: uncomment when HostController exists
+        if (User.IsInRole("Host"))
+        {
+            <li class="nav-item"><a class="nav-link" asp-controller="Host" asp-action="Dashboard">Host Dashboard</a></li>
+        }
+        *@
+
+        @* Step 6 part 2: uncomment when AdminController exists
+        if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+        {
+            <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Admin</a></li>
+        }
+        *@
+
+        <li class="nav-item">
+            <span class="nav-link text-muted">@User.Identity!.Name</span>
+        </li>
+        <li class="nav-item">
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-link nav-link">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Login</a></li>
+        <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Register">Register</a></li>
+    }
+</ul>
