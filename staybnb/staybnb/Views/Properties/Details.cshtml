@@ -1,0 +1,117 @@
+﻿@model staybnb.Models.HostProperty
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<h2>@Model.Title</h2>
+<p class="text-muted">
+    @Model.City &middot; @Model.MaxGuests guests &middot; @Model.Bedrooms bedrooms &middot; @Model.Bathrooms baths
+    &middot; Hosted by @Model.Host.FirstName
+</p>
+
+<div class="row g-2 mb-4">
+    @foreach (var img in Model.Images)
+    {
+        <div class="col-6 col-md-4"><img src="@img.ImageUrl" class="img-fluid rounded" style="height:220px;width:100%;object-fit:cover" alt="@Model.Title" /></div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <p>@Model.Description</p>
+
+        @if (Model.Amenities.Any())
+        {
+            <h5>Amenities</h5>
+            <ul class="list-inline">
+                @foreach (var a in Model.Amenities)
+                {
+                    <li class="list-inline-item badge bg-light text-dark border">@a.Name</li>
+                }
+            </ul>
+        }
+    </div>
+
+    <div class="col-md-5">
+        <div class="card p-3 shadow-sm">
+            <div class="fs-5 mb-2"><strong>R @Model.PricePerNight.ToString("N0")</strong> <span class="text-muted">/ night</span></div>
+
+            @if (User.IsInRole("Guest"))
+            {
+                <form asp-controller="Guest" asp-action="Book" method="post">
+                    <input type="hidden" name="propertyId" value="@Model.Id" />
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small">Check-in</label>
+                            <input type="date" id="checkIn" name="checkIn" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="col">
+                            <label class="form-label small">Check-out</label>
+                            <input type="date" id="checkOut" name="checkOut" class="form-control" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Guests (max @Model.MaxGuests)</label>
+                        <input type="number" name="guests" value="1" min="1" max="@Model.MaxGuests" class="form-control" required />
+                    </div>
+
+                    <div id="quote" class="small mb-3 d-none">
+                        <div class="d-flex justify-content-between"><span id="qNights"></span><span id="qSub"></span></div>
+                        <div class="d-flex justify-content-between"><span>Cleaning fee</span><span id="qClean"></span></div>
+                        <div class="d-flex justify-content-between"><span>Service fee</span><span id="qService"></span></div>
+                        <hr class="my-1" />
+                        <div class="d-flex justify-content-between fw-bold"><span>Total</span><span id="qTotal"></span></div>
+                    </div>
+
+                    <button class="btn btn-danger w-100">Request to book</button>
+                </form>
+
+                <a asp-controller="Messages" asp-action="Conversation" asp-route-id="@Model.HostId"
+                   class="btn btn-outline-secondary w-100 mt-2">Message host</a>
+            }
+            else if (!User.Identity!.IsAuthenticated)
+            {
+                <a asp-controller="Account" asp-action="Login"
+                   asp-route-returnUrl="@Url.Action("Details", "Properties", new { id = Model.Id })"
+                   class="btn btn-danger w-100">Log in to book</a>
+            }
+            else
+            {
+                <p class="text-muted mb-0">Only guest accounts can make bookings.</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Display only. The server recalculates the real price when the booking is made.
+        const price   = @Model.PricePerNight.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        const cleaning = @Model.CleaningFee.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        const rate    = @(((decimal)ViewBag.ServiceFeeRate).ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+        const fmt = n => 'R ' + Math.round(n).toLocaleString();
+        const ci = document.getElementById('checkIn');
+        const co = document.getElementById('checkOut');
+
+        function update() {
+          if (!ci || !ci.value || !co.value) return;
+          const nights = Math.round((new Date(co.value) - new Date(ci.value)) / 86400000);
+          const box = document.getElementById('quote');
+          if (nights < 1) { box.classList.add('d-none'); return; }
+          const sub = price * nights, service = sub * rate;
+          document.getElementById('qNights').textContent = fmt(price) + ' x ' + nights + ' night(s)';
+          document.getElementById('qSub').textContent = fmt(sub);
+          document.getElementById('qClean').textContent = fmt(cleaning);
+          document.getElementById('qService').textContent = fmt(service);
+          document.getElementById('qTotal').textContent = fmt(sub + cleaning + service);
+          box.classList.remove('d-none');
+        }
+        if (ci) { ci.addEventListener('change', update); co.addEventListener('change', update); }
+    </script>
+}

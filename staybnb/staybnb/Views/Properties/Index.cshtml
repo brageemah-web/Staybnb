@@ -1,0 +1,58 @@
+﻿@model List<staybnb.Models.HostProperty>
+@{
+    ViewData["Title"] = "Find your next stay";
+}
+
+<h2 class="mb-3">Relax. Unwind. Choose your next stay.</h2>
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <input name="city" value="@ViewBag.City" class="form-control" placeholder="City" />
+    </div>
+    <div class="col-md-3">
+        <select name="type" class="form-select">
+            <option value="">Any type</option>
+            @foreach (var t in Enum.GetValues<PropertyType>())
+            {
+                <option value="@t" selected="@((PropertyType?)ViewBag.Type == t)">@t</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto"><button class="btn btn-danger">Search</button></div>
+    <div class="col-auto"><a asp-action="Index" class="btn btn-outline-secondary">Clear</a></div>
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No properties match your search.</p>
+}
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var p in Model)
+    {
+        var image = p.Images.FirstOrDefault()?.ImageUrl;
+        var rating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0;
+        <div class="col">
+            <a asp-action="Details" asp-route-id="@p.Id" class="text-decoration-none text-dark">
+                <div class="card h-100 border-0">
+                    @if (image != null)
+                    {
+                        <img src="@image" class="card-img-top rounded-3" style="height:220px;object-fit:cover" alt="@p.Title" />
+                    }
+                    else
+                    {
+                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style="height:220px">No image</div>
+                    }
+                    <div class="card-body px-1">
+                        <div class="d-flex justify-content-between">
+                            <strong>@p.Title</strong>
+                            <span>&#9733; @rating.ToString("0.0")</span>
+                        </div>
+                        <div class="text-muted small">@p.City &middot; @p.PropertyType</div>
+                        <div class="mt-1"><strong>R @p.PricePerNight.ToString("N0")</strong> <span class="text-muted">/ night</span></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>

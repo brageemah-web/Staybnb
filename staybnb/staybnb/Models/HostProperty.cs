@@ -47,5 +47,7 @@ namespace staybnb.Models
         public ICollection<Amenity> Amenities { get; set; } = new List<Amenity>();
         public ICollection<PropertyImage> Images {get; set; } = new List<PropertyImage>();
         public CheckInProcess? CheckInProcess { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     } 
 }

@@ -10,16 +10,15 @@ public interface INotificationService
 
 public class NotificationService : INotificationService
 {
-    private readonly ApplicationContext _db;
+    private readonly ApplicationContext _context;
 
-    public NotificationService(ApplicationContext db)
+    public NotificationService(ApplicationContext context)
     {
-        _db = db;
+        _context = context;
     }
 
-    public async Task NotifyAsync(string userId, string title, string? body, NotificationType type, string? linkUrl = null)
-    {
-        _db.Notifications.Add(new Notification
+    public async Task NotifyAsync(string userId, string title, string? body, NotificationType type, string? linkUrl = null){
+        _context.Notifications.Add(new Notification
         {
             UserId = userId,
             Title = title,
@@ -27,9 +26,9 @@ public class NotificationService : INotificationService
             Type = type,
             LinkUrl = linkUrl,
             IsRead = false,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.Now
         });
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

@@ -34,5 +34,6 @@ namespace staybnb.Models
 
         public Payment? Payment { get; set; }
         public GuestCheckIn? GuestCheckIn { get; set; }
+        public int NumberOfGuests { get; set; }
     }
 }

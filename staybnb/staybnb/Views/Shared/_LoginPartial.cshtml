@@ -10,24 +10,30 @@
             <li class="nav-item"><a class="nav-link" asp-controller="HostApplication" asp-action="Create">Become a Host</a></li>
             <li class="nav-item"><a class="nav-link" asp-controller="HostApplication" asp-action="Status">Application Status</a></li>
 
-            @* Step 7: uncomment when GuestController exists
             <li class="nav-item"><a class="nav-link" asp-controller="Guest" asp-action="MyBookings">My Bookings</a></li>
-            *@
         }
 
-        @* Step 7: uncomment when HostController exists
         if (User.IsInRole("Host"))
         {
             <li class="nav-item"><a class="nav-link" asp-controller="Host" asp-action="Dashboard">Host Dashboard</a></li>
         }
-        *@
 
-        @* Step 6 part 2: uncomment when AdminController exists
         if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
         {
             <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Admin</a></li>
+            <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Applications">Applications</a></li>
+            <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="ActivityLogs">Logs</a></li>
         }
-        *@
+        if (User.IsInRole("SuperAdmin"))
+        {
+            <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="Index">Users</a></li>
+        }
+
+        <li class="nav-item"><a class="nav-link" asp-controller="Messages" asp-action="Index">Messages</a></li>
+
+        <li class="nav-item">
+            @await Component.InvokeAsync("NotificationBell")
+        </li>
 
         <li class="nav-item">
             <span class="nav-link text-muted">@User.Identity!.Name</span>

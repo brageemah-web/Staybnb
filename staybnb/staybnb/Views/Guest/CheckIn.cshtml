@@ -1,0 +1,101 @@
+﻿@model staybnb.Models.Booking
+@{
+    ViewData["Title"] = "Check-in";
+    var config = (CheckInConfig?)ViewBag.Config;
+    var checkIn = Model.GuestCheckIn;
+    var status = checkIn?.Status ?? CheckInStatus.NotStarted;
+}
+
+<a asp-action="MyBookings">&larr; My bookings</a>
+<h2 class="mt-2">Check-in: @Model.Property.Title</h2>
+<p class="text-muted">@Model.CheckInDate.ToString("dd MMM") &ndash; @Model.CheckOutDate.ToString("dd MMM yyyy")</p>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="mb-4">
+    <span class="badge @(status >= CheckInStatus.InProgress ? "bg-success" : "bg-secondary")">1. Rules</span>
+    <span class="badge @(checkIn != null && checkIn.Documents.Any() ? "bg-success" : "bg-secondary")">2. Document</span>
+    <span class="badge @(status == CheckInStatus.Submitted || status == CheckInStatus.Verified ? "bg-success" : "bg-secondary")">3. Submit</span>
+    <span class="badge @(status == CheckInStatus.Verified ? "bg-success" : "bg-secondary")">4. Verified</span>
+</div>
+
+@if (config == null)
+{
+    <div class="alert alert-warning">The host hasn't set up check-in for this property yet. Please check back later.</div>
+}
+else if (status == CheckInStatus.NotStarted)
+{
+    <h5>@Model.Property.CheckInProcess!.Title</h5>
+    <div class="card card-body mb-3" style="white-space:pre-line">@config.Rules</div>
+    <form asp-action="StartCheckIn" asp-route-id="@Model.Id" method="post">
+        <button class="btn btn-danger">I've read the rules, start check-in</button>
+    </form>
+}
+else
+{
+    @if (checkIn!.Documents.Any())
+    {
+        <h5>Your documents</h5>
+        <table class="table table-sm align-middle mb-4">
+            <thead><tr><th>Type</th><th>Status</th></tr></thead>
+            <tbody>
+                @foreach (var d in checkIn.Documents)
+                {
+                    <tr>
+                        <td>@d.DocumentType</td>
+                        <td>
+                            <span class="badge @(d.Status == DocumentStatus.Approved ? "bg-success"
+                                                : d.Status == DocumentStatus.Rejected ? "bg-danger"
+                                                : "bg-warning text-dark")">@d.Status</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (status == CheckInStatus.InProgress || status == CheckInStatus.Rejected)
+    {
+        @if (status == CheckInStatus.Rejected)
+        {
+            <div class="alert alert-warning">A document was rejected. Please upload a new one and submit again.</div>
+        }
+
+        <form asp-action="UploadDocument" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="row g-2 mb-3">
+            <div class="col-md-3">
+                <select name="documentType" class="form-select">
+                    @foreach (var t in config.DocumentTypes)
+                    {
+                        <option value="@t">@t</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <input type="file" name="file" accept=".jpg,.jpeg,.png,.pdf" class="form-control" required />
+            </div>
+            <div class="col-auto"><button class="btn btn-outline-danger">Upload</button></div>
+        </form>
+
+        @if (checkIn.Documents.Any(d => d.Status == DocumentStatus.Pending))
+        {
+            <form asp-action="SubmitCheckIn" asp-route-id="@Model.Id" method="post">
+                <button class="btn btn-danger">Submit check-in</button>
+            </form>
+        }
+    }
+    else if (status == CheckInStatus.Submitted)
+    {
+        <div class="alert alert-info">Submitted. Waiting for the host to verify your document.</div>
+    }
+    else if (status == CheckInStatus.Verified)
+    {
+        <div class="alert alert-success">You're checked in. Enjoy your stay!</div>
+    }
+}

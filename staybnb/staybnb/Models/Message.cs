@@ -19,7 +19,8 @@ namespace staybnb.Models
         [Required]
         public string Content { get; set; } = "";
 
-        public DateTime TimeStamp { get; set; } = DateTime.Now;
+     
+        public DateTime Timestamp { get;  set; }
         public bool IsRead { get; set; }
     }
 }

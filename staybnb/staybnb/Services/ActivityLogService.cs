@@ -24,7 +24,7 @@ namespace staybnb.Services
                 ActivityType = type,
                 Action = action,
                 Details = details,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             });
             await _context.SaveChangesAsync();
         }

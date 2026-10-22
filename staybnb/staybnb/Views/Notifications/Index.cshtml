@@ -1,0 +1,73 @@
+﻿@model List<staybnb.Models.Notification>
+@{
+    ViewData["Title"] = "Notifications";
+    bool unreadOnly = (bool)ViewBag.UnreadOnly;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">
+        Notifications
+        @if ((int)ViewBag.UnreadCount > 0)
+        {
+            <span class="badge bg-danger fs-6">@ViewBag.UnreadCount new</span>
+        }
+    </h2>
+    <form asp-action="MarkAllRead" method="post">
+        <button class="btn btn-sm btn-outline-secondary">Mark all read</button>
+    </form>
+</div>
+
+<ul class="nav nav-pills mb-3">
+    <li class="nav-item"><a class="nav-link @(!unreadOnly ? "active" : "")" asp-action="Index">All (@ViewBag.TotalCount)</a></li>
+    <li class="nav-item"><a class="nav-link @(unreadOnly ? "active" : "")" asp-action="Index" asp-route-unreadOnly="true">Unread (@ViewBag.UnreadCount)</a></li>
+</ul>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Nothing here.</p>
+}
+
+@foreach (var n in Model)
+{
+    var badge = n.Type switch
+    {
+        NotificationType.HostApplicationApproved or NotificationType.BookingApproved
+          or NotificationType.CheckInVerified or NotificationType.Success => "bg-success",
+        NotificationType.HostApplicationRejected or NotificationType.BookingRejected
+          or NotificationType.Warning => "bg-danger",
+        NotificationType.NewMessage => "bg-info text-dark",
+        _ => "bg-primary"
+    };
+
+    <div class="card mb-2 @(n.IsRead ? "" : "border-danger")">
+        <div class="card-body d-flex justify-content-between align-items-start">
+            <div>
+                <span class="badge @badge">@n.Type</span>
+                <strong class="ms-2 @(n.IsRead ? "fw-normal" : "")">@n.Title</strong>
+                @if (!n.IsRead)
+                {
+                    <span class="badge bg-danger ms-1">Unread</span>
+                }
+                <div class="mt-1">@n.Body</div>
+                <small class="text-muted">@n.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</small>
+            </div>
+            <div class="d-flex gap-2">
+                @if (!string.IsNullOrEmpty(n.LinkUrl))
+                {
+                    <form asp-action="Open" asp-route-id="@n.Id" method="post">
+                        <button class="btn btn-sm btn-danger">Take action</button>
+                    </form>
+                }
+                @if (!n.IsRead)
+                {
+                    <form asp-action="MarkRead" asp-route-id="@n.Id" method="post">
+                        <button class="btn btn-sm btn-outline-secondary">Mark read</button>
+                    </form>
+                }
+                <form asp-action="Delete" asp-route-id="@n.Id" method="post">
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}

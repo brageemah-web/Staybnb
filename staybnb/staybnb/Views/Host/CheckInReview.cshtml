@@ -1,0 +1,53 @@
+﻿@model staybnb.Models.GuestCheckIn
+@{
+    ViewData["Title"] = "Review check-in";
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<a asp-action="CheckIns">&larr; Back to check-ins</a>
+<h2 class="mt-2">@Model.Booking.Property.Title</h2>
+<p class="text-muted">
+    Guest: @Model.Booking.Guest.FirstName @Model.Booking.Guest.LastName (@Model.Booking.Guest.Email)
+    &middot; @Model.Booking.CheckInDate.ToString("dd MMM") &ndash; @Model.Booking.CheckOutDate.ToString("dd MMM yyyy")
+    &middot; Check-in status: <strong>@Model.Status</strong>
+</p>
+
+@if (!Model.Documents.Any())
+{
+    <p class="text-muted">No documents uploaded yet.</p>
+}
+else
+{
+    <table class="table align-middle">
+        <thead><tr><th>Type</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var d in Model.Documents)
+            {
+                <tr>
+                    <td>@d.DocumentType</td>
+                    <td>
+                        <span class="badge @(d.Status == DocumentStatus.Approved ? "bg-success"
+                                            : d.Status == DocumentStatus.Rejected ? "bg-danger"
+                                            : "bg-warning text-dark")">@d.Status</span>
+                    </td>
+                    <td class="d-flex gap-2">
+                        <a asp-action="ViewDocument" asp-route-id="@d.Id" target="_blank" class="btn btn-sm btn-outline-secondary">Open</a>
+                        @if (d.Status == DocumentStatus.Pending)
+                        {
+                            <form asp-action="ReviewDocument" asp-route-id="@d.Id" asp-route-approve="true" method="post">
+                                <button class="btn btn-sm btn-success">Approve</button>
+                            </form>
+                            <form asp-action="ReviewDocument" asp-route-id="@d.Id" asp-route-approve="false" method="post">
+                                <button class="btn btn-sm btn-outline-danger">Reject</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

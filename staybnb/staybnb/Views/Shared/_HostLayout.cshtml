@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <div class="col-md-2 mb-3">
+        <div class="list-group">
+            <a class="list-group-item list-group-item-action" asp-controller="Host" asp-action="Dashboard">Dashboard</a>
+            <a class="list-group-item list-group-item-action" asp-controller="Host" asp-action="MyProperties">My Properties</a>
+            <a class="list-group-item list-group-item-action" asp-controller="Host" asp-action="BookingRequests">Booking Requests</a>
+            <a class="list-group-item list-group-item-action" asp-controller="Host" asp-action="CheckIns">Guest Check-ins</a>
+            <a class="list-group-item list-group-item-action" asp-controller="Messages" asp-action="Index">Messages</a>
+        </div>
+    </div>
+    <div class="col-md-10">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

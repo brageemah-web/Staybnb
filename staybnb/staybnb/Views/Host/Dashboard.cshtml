@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Host Dashboard";
+}
+
+<div class="card p-4 mb-4">
+    <h4 class="text-danger">Welcome back, @ViewBag.Name!</h4>
+    <p class="text-muted mb-2">Here's what's happening with your properties.</p>
+    <div>
+        <a asp-action="MyProperties" class="btn btn-sm btn-outline-danger">My properties</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Total properties</div><div class="fs-3">@ViewBag.TotalProperties</div><small class="text-success">@ViewBag.ActiveProperties active</small></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Total bookings</div><div class="fs-3">@ViewBag.TotalBookings</div><small class="text-warning">@ViewBag.PendingBookings pending</small></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Total earnings</div><div class="fs-3">R @(((decimal)ViewBag.Earnings).ToString("N0"))</div></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Average rating</div><div class="fs-3">@(((double)ViewBag.AverageRating).ToString("0.0"))</div></div></div>
+</div>

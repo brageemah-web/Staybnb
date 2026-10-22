@@ -1,0 +1,45 @@
+﻿@model List<staybnb.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "User management";
+}
+
+<h2 class="mb-3">User management</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input name="search" value="@ViewBag.Search" class="form-control" placeholder="Search guests by name or email" />
+    </div>
+    <div class="col-auto"><button class="btn btn-outline-secondary">Search</button></div>
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No guests found.</p>
+}
+else
+{
+    <table class="table align-middle">
+        <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.FirstName @u.LastName</td>
+                    <td>@u.Email</td>
+                    <td>@u.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <form asp-action="PromoteToAdmin" asp-route-id="@u.Id" method="post"
+                              onsubmit="return confirm('Promote this user to Admin?');">
+                            <button class="btn btn-sm btn-outline-danger">Promote to Admin</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

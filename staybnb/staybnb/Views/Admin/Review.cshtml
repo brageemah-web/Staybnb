@@ -1,0 +1,56 @@
+﻿@model staybnb.Models.HostApplication
+@{
+    ViewData["Title"] = "Review application";
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning">@TempData["Message"]</div>
+}
+
+<a asp-action="Applications">&larr; Back to applications</a>
+<h2 class="mt-2">@Model.Property.Title</h2>
+<p class="text-muted">
+    @Model.Property.Address, @Model.Property.City &middot; @Model.Property.PropertyType &middot;
+    R @Model.Property.PricePerNight / night &middot; cleaning fee R @Model.Property.CleaningFee
+</p>
+<p>Applicant: <strong>@Model.ApplicationUser.FirstName @Model.ApplicationUser.LastName</strong> (@Model.ApplicationUser.Email)</p>
+<p>@Model.Property.Description</p>
+<p>
+    @Model.Property.MaxGuests guests &middot; @Model.Property.Bedrooms bedrooms &middot; @Model.Property.Bathrooms bathrooms
+    @if (Model.Property.Amenities.Any())
+    {
+        <br /><span>Amenities: @string.Join(", ", Model.Property.Amenities.Select(a => a.Name))</span>
+    }
+</p>
+
+<div class="row g-2 mb-4">
+    @foreach (var img in Model.Property.Images)
+    {
+        <div class="col-6 col-md-3"><img src="@img.ImageUrl" class="img-fluid rounded" alt="Property image" /></div>
+    }
+</div>
+
+@if (Model.Status == ApplicationStatus.Pending)
+{
+    <div class="d-flex gap-3 align-items-start">
+        <form asp-action="Approve" asp-route-id="@Model.Id" method="post">
+            <button class="btn btn-success">Approve</button>
+        </form>
+
+        <form asp-action="Reject" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+            <input name="reason" class="form-control" placeholder="Reason for rejection (optional)" />
+            <button class="btn btn-danger">Reject</button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="alert alert-secondary">
+        Already @Model.Status.ToString().ToLower()
+        @if (Model.ReviewedAt != null)
+        {
+            <text>on @Model.ReviewedAt.Value.ToString("yyyy-MM-dd")</text>
+        }
+    </div>
+}

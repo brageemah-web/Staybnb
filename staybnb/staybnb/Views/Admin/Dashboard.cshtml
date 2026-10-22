@@ -1,0 +1,29 @@
+﻿@model List<staybnb.Models.ActivityLog>
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-4">Dashboard Overview</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Total users</div><div class="fs-3">@ViewBag.TotalUsers</div></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Pending host apps</div><div class="fs-3 text-warning">@ViewBag.PendingApps</div><a asp-action="Applications">Review</a></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Active properties</div><div class="fs-3">@ViewBag.ActiveProperties</div></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted">Total bookings</div><div class="fs-3">@ViewBag.TotalBookings</div></div></div>
+</div>
+
+<h4>Recent activity</h4>
+<table class="table table-sm">
+    <thead><tr><th>User</th><th>Action</th><th>Details</th><th>Date</th></tr></thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.User.Email</td>
+                <td>@log.Action</td>
+                <td>@log.Details</td>
+                <td>@log.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>

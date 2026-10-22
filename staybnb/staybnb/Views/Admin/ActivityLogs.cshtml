@@ -1,0 +1,46 @@
+﻿@model List<staybnb.Models.ActivityLog>
+@{
+    ViewData["Title"] = "Activity logs";
+}
+
+<h2 class="mb-3">Activity logs</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="type" class="form-select">
+            <option value="">All types</option>
+            @foreach (var t in Enum.GetValues<ActivityType>())
+            {
+                <option value="@t" selected="@(ViewBag.Type == t)">@t</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto"><button class="btn btn-outline-secondary">Filter</button></div>
+</form>
+
+<table class="table table-sm align-middle">
+    <thead><tr><th>Date</th><th>User</th><th>Type</th><th>Action</th><th>Details</th></tr></thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@log.User.Email</td>
+                <td><span class="badge bg-secondary">@log.ActivityType</span></td>
+                <td>@log.Action</td>
+                <td>@log.Details</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        @for (int p = 1; p <= (int)ViewBag.TotalPages; p++)
+        {
+            <li class="page-item @(p == (int)ViewBag.Page ? "active" : "")">
+                <a class="page-link" asp-action="ActivityLogs" asp-route-page="@p" asp-route-type="@ViewBag.Type">@p</a>
+            </li>
+        }
+    </ul>
+</nav>

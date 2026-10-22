@@ -1,0 +1,32 @@
+﻿@model List<staybnb.Models.HostApplication>
+@{
+    ViewData["Title"] = "Host applications";
+}
+
+<h2 class="mb-3">Host applications</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<table class="table align-middle">
+    <thead><tr><th>Applicant</th><th>Property</th><th>City</th><th>Applied</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.ApplicationUser.FirstName @a.ApplicationUser.LastName<br /><small class="text-muted">@a.ApplicationUser.Email</small></td>
+                <td>@a.Property.Title</td>
+                <td>@a.Property.City</td>
+                <td>@a.AppliedAt.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <span class="badge @(a.Status == ApplicationStatus.Approved ? "bg-success"
+                                        : a.Status == ApplicationStatus.Rejected ? "bg-danger"
+                                        : "bg-warning text-dark")">@a.Status</span>
+                </td>
+                <td><a asp-action="Review" asp-route-id="@a.Id" class="btn btn-sm btn-outline-secondary">View</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

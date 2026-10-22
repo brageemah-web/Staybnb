@@ -1,0 +1,35 @@
+﻿@model List<staybnb.Models.GuestCheckIn>
+@{
+    ViewData["Title"] = "Guest check-ins";
+}
+
+<h2 class="mb-3">Guest check-ins</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No guests have started check-in yet.</p>
+}
+else
+{
+    <table class="table align-middle">
+        <thead><tr><th>Guest</th><th>Property</th><th>Dates</th><th>Documents</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Booking.Guest.FirstName @c.Booking.Guest.LastName</td>
+                    <td>@c.Booking.Property.Title</td>
+                    <td>@c.Booking.CheckInDate.ToString("dd MMM") &ndash; @c.Booking.CheckOutDate.ToString("dd MMM yyyy")</td>
+                    <td>@c.Documents.Count</td>
+                    <td>
+                        <span class="badge @(c.Status == CheckInStatus.Verified ? "bg-success"
+                                            : c.Status == CheckInStatus.Submitted ? "bg-warning text-dark"
+                                            : c.Status == CheckInStatus.Rejected ? "bg-danger"
+                                            : "bg-secondary")">@c.Status</span>
+                    </td>
+                    <td><a asp-action="CheckInReview" asp-route-id="@c.Id" class="btn btn-sm btn-outline-secondary">Review</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

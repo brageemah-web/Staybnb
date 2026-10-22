@@ -1,0 +1,45 @@
+﻿@model staybnb.ViewModels.CheckInSetupViewModel
+@{
+    ViewData["Title"] = "Check-in setup";
+}
+
+<h2>Check-in setup</h2>
+<p class="text-muted">@ViewBag.PropertyTitle</p>
+
+<form asp-action="CheckInSetup" method="post">
+    <input type="hidden" asp-for="PropertyId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Rules" class="form-label"></label>
+        <textarea asp-for="Rules" rows="6" class="form-control"
+                  placeholder="Check-in time, key collection, quiet hours, house rules..."></textarea>
+        <span asp-validation-for="Rules" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Accepted documents (guest uploads one)</label>
+        @foreach (var t in new[] { "ID", "Passport" })
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="DocumentTypes" value="@t" id="doc-@t"
+                       checked="@Model.DocumentTypes.Contains(t)" />
+                <label class="form-check-label" for="doc-@t">@t</label>
+            </div>
+        }
+        <span asp-validation-for="DocumentTypes" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-danger">Save</button>
+    <a asp-action="MyProperties" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

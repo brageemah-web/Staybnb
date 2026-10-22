@@ -1,0 +1,39 @@
+﻿@model List<staybnb.Models.Message>
+@{
+    ViewData["Title"] = "Conversation";
+    var other = (staybnb.Models.ApplicationUser)ViewBag.Other;
+    var me = (string)ViewBag.UserId;
+}
+
+<a asp-action="Index">&larr; All messages</a>
+<h3 class="mt-2 mb-3">@other.FirstName @other.LastName</h3>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="border rounded p-3 mb-3" style="max-height:420px;overflow-y:auto">
+    @if (!Model.Any())
+    {
+        <p class="text-muted mb-0">No messages yet. Say hello below.</p>
+    }
+    @foreach (var m in Model)
+    {
+        var mine = m.SenderId == me;
+        <div class="d-flex @(mine ? "justify-content-end" : "justify-content-start") mb-2">
+            <div class="px-3 py-2 rounded @(mine ? "bg-danger text-white" : "bg-light border")" style="max-width:70%">
+                <div style="white-space:pre-line">@m.Content</div>
+                <div class="small @(mine ? "text-white-50" : "text-muted") text-end">@m.Timestamp.ToLocalTime().ToString("dd MMM HH:mm")</div>
+            </div>
+        </div>
+    }
+</div>
+
+<form asp-action="Send" method="post">
+    <input type="hidden" name="receiverId" value="@other.Id" />
+    <div class="input-group">
+        <textarea name="content" rows="2" maxlength="2000" class="form-control" placeholder="Write a reply..." required></textarea>
+        <button class="btn btn-danger">Send</button>
+    </div>
+</form>
